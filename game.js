@@ -199,9 +199,10 @@ function renderBoard() {
 
     liveIds.add(String(item.id));
     const element    = getOrCreateItemElement(item, position.key);
-    const isDispenser = item.kind === "dispenser";
-    const def        = isDispenser ? null : getItemDef(item.level);
-    const image      = element.querySelector("img");
+    const isDispenser  = item.kind === "dispenser";
+    const isBlueprint  = !isDispenser && item.level === getBlueprintLevel();
+    const def          = isDispenser ? null : getItemDef(isBlueprint ? 7 : item.level);
+    const image        = element.querySelector("img");
 
     image.src = isDispenser ? "assets/dispenser.svg" : def.img;
     element.style.setProperty("--item-color", isDispenser ? "#ffd071" : def.color);
