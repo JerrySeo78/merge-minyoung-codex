@@ -1,0 +1,19 @@
+# 환경 변수
+.env.local
+.env
+
+# 의존성
+node_modules/
+package-lock.json
+
+# 빌드 출력
+dist/
+.vite/
+
+# 기술 자산 (선택적 제외)
+.reference/
+
+# 임시 파일
+*.log
+.DS_Store
+_upgrade_backup/

@@ -197,81 +197,159 @@ h1 {
   clip-path: ellipse(66% 52% at 50% 100%);
 }
 
-.stage-garden {
+.village-viewport {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  height: 118px;
+  overflow: hidden;
   z-index: 2;
   pointer-events: none;
 }
 
-.stage-plant {
-  position: absolute;
-  width: 42px;
-  height: 68px;
-  transform-origin: bottom center;
-  opacity: 0;
-  transform: translateY(10px) scale(0.72);
-  transition: transform 240ms ease, opacity 240ms ease;
-}
-
-.stage-plant.is-visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-.stage-plant.is-new {
-  animation: plantBloom 520ms cubic-bezier(0.18, 0.86, 0.2, 1);
-}
-
-.stage-plant-stem {
-  position: absolute;
-  left: 19px;
-  bottom: 4px;
-  width: 5px;
-  height: 34px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #5fc65a, #367f34);
-}
-
-.stage-plant-leaf {
-  position: absolute;
-  bottom: 24px;
-  width: 20px;
-  height: 14px;
-  border-radius: 16px 16px 2px 16px;
-  background: linear-gradient(180deg, #8ce26d, #59a947);
-}
-
-.stage-plant-leaf.left {
-  left: 2px;
-  transform: rotate(-26deg);
-}
-
-.stage-plant-leaf.right {
-  right: 2px;
-  transform: scaleX(-1) rotate(-26deg);
-}
-
-.stage-plant-bud {
-  position: absolute;
-  left: 10px;
-  top: 0;
-  width: 22px;
-  height: 26px;
-  border-radius: 50% 50% 48% 48%;
-  background: var(--plant-bud, linear-gradient(180deg, #f8f4f1, #ffe99b));
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.68);
-}
-
-.stage-plant-bud::after {
+.village-viewport::before {
   content: "";
   position: absolute;
-  left: 7px;
-  top: 5px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.84);
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  height: 14px;
+  background: linear-gradient(180deg, rgba(134, 111, 82, 0.14), rgba(120, 92, 58, 0.28));
+}
+
+.village-track {
+  position: absolute;
+  left: 0;
+  bottom: 18px;
+  display: flex;
+  gap: 16px;
+  align-items: end;
+  padding: 0 26px;
+  transition: transform 420ms cubic-bezier(0.18, 0.82, 0.2, 1);
+}
+
+.village-lot {
+  position: absolute;
+  position: relative;
+  flex: 0 0 112px;
+  height: 92px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+
+.village-lot::before {
+  content: "";
+  position: absolute;
+  inset: auto 8px 0;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(113, 84, 52, 0.16);
+  filter: blur(1px);
+}
+
+.village-empty {
+  width: 92px;
+  height: 44px;
+  border-radius: 18px;
+  border: 2px dashed rgba(134, 103, 66, 0.24);
+  background: rgba(255, 245, 214, 0.26);
+}
+
+.village-building {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 8px;
+  height: 70px;
+  border-radius: 18px 18px 12px 12px;
+  border: 3px solid rgba(95, 66, 42, 0.9);
+  background: var(--building-wall, linear-gradient(180deg, #fff5d8, #f0cc7f));
+  box-shadow:
+    inset 0 4px 0 rgba(255, 255, 255, 0.58),
+    0 10px 16px rgba(121, 87, 48, 0.16);
+  transform-origin: bottom center;
+  overflow: hidden;
+  color: #5b3d27;
+}
+
+.village-building::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: -14px;
+  height: 26px;
+  border-radius: 16px 16px 8px 8px;
+  background: var(--building-roof, linear-gradient(180deg, #da7a42, #b24c27));
+  border: 3px solid rgba(95, 66, 42, 0.9);
+}
+
+.village-building::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 18px;
+  height: 26px;
+  transform: translateX(-50%);
+  border-radius: 8px 8px 0 0;
+  background: rgba(125, 92, 61, 0.26);
+  border: 2px solid rgba(95, 66, 42, 0.44);
+  border-bottom: 0;
+}
+
+.village-building.unlocked-new {
+  animation: buildingPop 540ms cubic-bezier(0.18, 0.86, 0.2, 1);
+}
+
+.village-windows {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 22px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.village-window {
+  height: 12px;
+  border-radius: 5px;
+  background: rgba(255, 252, 236, 0.84);
+  border: 2px solid rgba(120, 92, 56, 0.18);
+}
+
+.village-label {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 10px;
+  display: grid;
+  gap: 2px;
+  text-align: center;
+}
+
+.village-icon {
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  transform: translateX(-50%);
+  font-size: 1.12rem;
+}
+
+.village-name {
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.village-step {
+  font-size: 0.6rem;
+  color: rgba(91, 61, 39, 0.78);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .brown-character {
@@ -888,6 +966,23 @@ h1 {
 
   100% {
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes buildingPop {
+  0% {
+    transform: translateY(16px) scale(0.56);
+    opacity: 0;
+  }
+
+  55% {
+    transform: translateY(-4px) scale(1.08);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
   }
 }
 

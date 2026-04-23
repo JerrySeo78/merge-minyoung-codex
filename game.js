@@ -38,7 +38,7 @@ const bestLevelElement = document.querySelector("#bestLevel");
 const chargeCountElement = document.querySelector("#chargeCount");
 const emptyCountElement = document.querySelector("#emptyCount");
 const brownBubbleElement = document.querySelector("#brownBubble");
-const stageGardenElement = document.querySelector("#stageGarden");
+const villageTrackElement = document.querySelector("#villageTrack");
 const brownCharacterElement = document.querySelector(".brown-character");
 
 const positions = buildPositions();
@@ -60,14 +60,19 @@ let noiseBuffer = null;
 let stageGrowthCount = 0;
 let brownDirectionStart = Date.now();
 
-const STAGE_GARDEN_SLOTS = [
-  { left: "14%", bottom: "12%", hue: "#ffffff" },
-  { left: "28%", bottom: "14%", hue: "#c9f27f" },
-  { left: "56%", bottom: "13%", hue: "#ffd86b" },
-  { left: "66%", bottom: "18%", hue: "#ff9db1" },
-  { left: "18%", bottom: "26%", hue: "#9be089" },
-  { left: "61%", bottom: "28%", hue: "#a8f1c7" },
-  { left: "44%", bottom: "30%", hue: "#ffb35a" },
+const VILLAGE_BUILDINGS = [
+  { name: "집", icon: "🏠", step: "Step 1", wall: "linear-gradient(180deg, #fff6dd, #f2ce84)", roof: "linear-gradient(180deg, #df8458, #bb5a39)" },
+  { name: "카페", icon: "☕", step: "Step 2", wall: "linear-gradient(180deg, #fff1e2, #e9c29a)", roof: "linear-gradient(180deg, #8b5f49, #6e4736)" },
+  { name: "편의점", icon: "🛒", step: "Step 3", wall: "linear-gradient(180deg, #f3ffe5, #b8df8d)", roof: "linear-gradient(180deg, #5fcf7c, #349b58)" },
+  { name: "빵집", icon: "🥖", step: "Step 4", wall: "linear-gradient(180deg, #fff4d6, #f4cd7c)", roof: "linear-gradient(180deg, #ffb764, #ea8d33)" },
+  { name: "꽃집", icon: "🌷", step: "Step 5", wall: "linear-gradient(180deg, #fff1f6, #f5bfd0)", roof: "linear-gradient(180deg, #ff90b0, #e45a82)" },
+  { name: "놀이터", icon: "🎠", step: "Step 6", wall: "linear-gradient(180deg, #eef8ff, #b7d8ee)", roof: "linear-gradient(180deg, #6dbdf8, #438ec8)" },
+  { name: "공원", icon: "🌳", step: "Step 7", wall: "linear-gradient(180deg, #efffdc, #bce89d)", roof: "linear-gradient(180deg, #6fcb68, #41944a)" },
+  { name: "도서관", icon: "📚", step: "Step 8", wall: "linear-gradient(180deg, #fff8e9, #e8d1a8)", roof: "linear-gradient(180deg, #b78d58, #8e6638)" },
+  { name: "병원", icon: "🏥", step: "Step 9", wall: "linear-gradient(180deg, #ffffff, #dfeaf5)", roof: "linear-gradient(180deg, #ff8f8f, #d85d5d)" },
+  { name: "소방서", icon: "🚒", step: "Step 10", wall: "linear-gradient(180deg, #fff0eb, #efc0b2)", roof: "linear-gradient(180deg, #ff755f, #d64531)" },
+  { name: "경찰서", icon: "🚓", step: "Step 11", wall: "linear-gradient(180deg, #edf5ff, #c4d6f4)", roof: "linear-gradient(180deg, #79a8f8, #406ec5)" },
+  { name: "학교", icon: "🏫", step: "Step 12", wall: "linear-gradient(180deg, #fff3d7, #f0c68e)", roof: "linear-gradient(180deg, #f08f54, #c96736)" },
 ];
 
 function buildPositions() {
@@ -122,7 +127,7 @@ function resetGame() {
   updateBoardGeometry();
   seedInitialItems();
   renderBoard();
-  renderStageGarden();
+  renderVillageTrack();
   updateCounters();
   updateDispenserState();
   updateBrownFacing();
@@ -209,36 +214,60 @@ function renderBoard() {
   });
 }
 
-function renderStageGarden(newIndex = -1) {
-  if (!stageGardenElement) return;
+function renderVillageTrack(newIndex = -1) {
+  if (!villageTrackElement) return;
 
-  stageGardenElement.innerHTML = "";
+  villageTrackElement.innerHTML = "";
 
-  for (let index = 0; index < stageGrowthCount; index += 1) {
-    const slot = STAGE_GARDEN_SLOTS[index];
-    if (!slot) break;
+  VILLAGE_BUILDINGS.forEach((building, index) => {
+    const lot = document.createElement("div");
+    lot.className = "village-lot";
 
-    const plant = document.createElement("span");
-    plant.className = "stage-plant is-visible";
-    if (index === newIndex) {
-      plant.classList.add("is-new");
+    if (index < stageGrowthCount) {
+      const card = document.createElement("div");
+      card.className = "village-building";
+      if (index === newIndex) {
+        card.classList.add("unlocked-new");
+      }
+      card.style.setProperty("--building-wall", building.wall);
+      card.style.setProperty("--building-roof", building.roof);
+
+      const icon = document.createElement("span");
+      icon.className = "village-icon";
+      icon.textContent = building.icon;
+
+      const windows = document.createElement("div");
+      windows.className = "village-windows";
+      for (let count = 0; count < 4; count += 1) {
+        const windowPane = document.createElement("span");
+        windowPane.className = "village-window";
+        windows.append(windowPane);
+      }
+
+      const label = document.createElement("div");
+      label.className = "village-label";
+      const name = document.createElement("span");
+      name.className = "village-name";
+      name.textContent = building.name;
+      const step = document.createElement("span");
+      step.className = "village-step";
+      step.textContent = building.step;
+      label.append(name, step);
+
+      card.append(icon, windows, label);
+      lot.append(card);
+    } else {
+      const empty = document.createElement("div");
+      empty.className = "village-empty";
+      lot.append(empty);
     }
-    plant.style.left = slot.left;
-    plant.style.bottom = slot.bottom;
-    plant.style.setProperty("--plant-bud", `linear-gradient(180deg, ${slot.hue}, #ffe7a5)`);
 
-    const bud = document.createElement("span");
-    bud.className = "stage-plant-bud";
-    const stem = document.createElement("span");
-    stem.className = "stage-plant-stem";
-    const leafLeft = document.createElement("span");
-    leafLeft.className = "stage-plant-leaf left";
-    const leafRight = document.createElement("span");
-    leafRight.className = "stage-plant-leaf right";
+    villageTrackElement.append(lot);
+  });
 
-    plant.append(bud, stem, leafLeft, leafRight);
-    stageGardenElement.append(plant);
-  }
+  const focusIndex = Math.max(0, stageGrowthCount - 1);
+  const shift = Math.max(0, focusIndex - 2) * 128;
+  villageTrackElement.style.transform = `translateX(${-shift}px)`;
 }
 
 function getOrCreateItemElement(item, boardKey) {
@@ -449,9 +478,9 @@ async function commitMove(originKey, targetKey) {
       score += mergedDef.score;
       const previousHighestLevel = highestLevel;
       highestLevel = Math.max(highestLevel, mergedDef.level);
-      if (highestLevel > previousHighestLevel) {
-        stageGrowthCount = Math.min(STAGE_GARDEN_SLOTS.length, stageGrowthCount + 1);
-        renderStageGarden(stageGrowthCount - 1);
+      if (highestLevel > previousHighestLevel || stageGrowthCount < VILLAGE_BUILDINGS.length) {
+        stageGrowthCount = Math.min(VILLAGE_BUILDINGS.length, stageGrowthCount + 1);
+        renderVillageTrack(stageGrowthCount - 1);
       }
       playMergeSound(mergedDef.level);
       statusTextElement.textContent = `${mergedDef.label}로 머지됐어요.`;
