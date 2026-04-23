@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 140">
+  <!-- Ground base -->
+  <rect x="2" y="118" width="76" height="10" rx="3" fill="#90d878" stroke="#5aaa38" stroke-width="2"/>
+  <!-- Fence -->
+  <rect x="2" y="108" width="76" height="5" rx="2" fill="#e8d090" stroke="#c0a050" stroke-width="1.5"/>
+  <line x1="12" y1="108" x2="12" y2="118" stroke="#c0a050" stroke-width="2.5"/>
+  <line x1="26" y1="108" x2="26" y2="118" stroke="#c0a050" stroke-width="2.5"/>
+  <line x1="54" y1="108" x2="54" y2="118" stroke="#c0a050" stroke-width="2.5"/>
+  <line x1="68" y1="108" x2="68" y2="118" stroke="#c0a050" stroke-width="2.5"/>
+  <!-- Swing frame -->
+  <line x1="10" y1="36" x2="10" y2="108" stroke="#ff8844" stroke-width="5" stroke-linecap="round"/>
+  <line x1="32" y1="36" x2="32" y2="108" stroke="#ff8844" stroke-width="5" stroke-linecap="round"/>
+  <line x1="6" y1="38" x2="36" y2="38" stroke="#ff8844" stroke-width="5" stroke-linecap="round"/>
+  <!-- Swing ropes -->
+  <line x1="14" y1="38" x2="17" y2="74" stroke="#888" stroke-width="1.5"/>
+  <line x1="28" y1="38" x2="25" y2="74" stroke="#888" stroke-width="1.5"/>
+  <!-- Swing seat -->
+  <rect x="14" y="74" width="14" height="5" rx="2" fill="#5a3018" stroke="#3a1808" stroke-width="1"/>
+  <!-- Slide pole -->
+  <rect x="50" y="42" width="8" height="66" rx="4" fill="#6dbdf8" stroke="#3a8ec8" stroke-width="2"/>
+  <!-- Slide ramp -->
+  <path d="M 58 60 L 74 108 L 68 108 L 56 68 Z" fill="#6dbdf8" stroke="#3a8ec8" stroke-width="1.5"/>
+  <!-- Slide top platform -->
+  <rect x="46" y="40" width="16" height="6" rx="2" fill="#438ec8" stroke="#3a8ec8" stroke-width="1.5"/>
+  <!-- Sign -->
+  <rect x="34" y="18" width="26" height="12" rx="3" fill="#ff8844" stroke="#cc5522" stroke-width="1.5"/>
+  <text x="47" y="28" text-anchor="middle" font-family="sans-serif" font-size="7" fill="white" font-weight="bold">놀이터</text>
+</svg>

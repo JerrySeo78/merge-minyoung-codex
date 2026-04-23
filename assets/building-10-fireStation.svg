@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 140">
+  <!-- Wall -->
+  <rect x="8" y="50" width="64" height="88" rx="4" fill="#fff0eb" stroke="#c04030" stroke-width="2"/>
+  <!-- Roof -->
+  <rect x="4" y="40" width="72" height="14" rx="3" fill="#ff5540" stroke="#c03020" stroke-width="2"/>
+  <!-- Fire station star/badge -->
+  <circle cx="40" cy="26" r="12" fill="#ff5540" stroke="#c03020" stroke-width="2"/>
+  <text x="40" y="30" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white">🔥</text>
+  <!-- Garage door -->
+  <rect x="10" y="86" width="60" height="42" rx="3" fill="#e8c8b0" stroke="#c04030" stroke-width="2"/>
+  <!-- Garage door panels -->
+  <line x1="10" y1="100" x2="70" y2="100" stroke="#c04030" stroke-width="1.5" opacity="0.5"/>
+  <line x1="10" y1="114" x2="70" y2="114" stroke="#c04030" stroke-width="1.5" opacity="0.5"/>
+  <!-- Garage door handle -->
+  <rect x="34" y="107" width="12" height="4" rx="2" fill="#c04030" opacity="0.7"/>
+  <!-- Windows above garage -->
+  <rect x="14" y="58" width="20" height="16" rx="3" fill="#c8e8f8" stroke="#c04030" stroke-width="1.5"/>
+  <rect x="46" y="58" width="20" height="16" rx="3" fill="#c8e8f8" stroke="#c04030" stroke-width="1.5"/>
+  <!-- Sign -->
+  <rect x="16" y="76" width="48" height="10" rx="2" fill="#c04030" stroke="#901c10" stroke-width="1"/>
+  <text x="40" y="85" text-anchor="middle" font-family="sans-serif" font-size="7" fill="white" font-weight="bold">소방서</text>
+</svg>

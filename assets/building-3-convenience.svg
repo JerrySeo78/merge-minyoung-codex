@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 140">
+  <!-- Wall -->
+  <rect x="8" y="52" width="64" height="86" rx="4" fill="#f3ffe5" stroke="#5a8030" stroke-width="2"/>
+  <!-- Flat roof -->
+  <rect x="4" y="42" width="72" height="14" rx="3" fill="#5fcf7c" stroke="#38a050" stroke-width="2"/>
+  <!-- Sign strip -->
+  <rect x="8" y="56" width="64" height="18" rx="2" fill="#3ab058" stroke="#28883a" stroke-width="1.5"/>
+  <text x="40" y="69" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="bold">편의점</text>
+  <!-- Large glass windows -->
+  <rect x="10" y="80" width="26" height="30" rx="3" fill="#d8f4ff" stroke="#5a8030" stroke-width="1.5"/>
+  <rect x="44" y="80" width="26" height="30" rx="3" fill="#d8f4ff" stroke="#5a8030" stroke-width="1.5"/>
+  <!-- Window shelves (decorative) -->
+  <line x1="10" y1="96" x2="36" y2="96" stroke="#5a8030" stroke-width="1" opacity="0.4"/>
+  <line x1="44" y1="96" x2="70" y2="96" stroke="#5a8030" stroke-width="1" opacity="0.4"/>
+  <!-- Sliding door -->
+  <rect x="22" y="112" width="36" height="26" rx="2" fill="#b8e8b0" stroke="#5a8030" stroke-width="1.5"/>
+  <line x1="40" y1="112" x2="40" y2="138" stroke="#5a8030" stroke-width="2"/>
+  <!-- Door handle -->
+  <rect x="35" y="124" width="4" height="8" rx="2" fill="#5a8030" opacity="0.7"/>
+  <rect x="41" y="124" width="4" height="8" rx="2" fill="#5a8030" opacity="0.7"/>
+</svg>

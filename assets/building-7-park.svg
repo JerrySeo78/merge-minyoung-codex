@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 140">
+  <!-- Ground -->
+  <rect x="2" y="120" width="76" height="10" rx="3" fill="#90d878" stroke="#5aaa38" stroke-width="2"/>
+  <!-- Path -->
+  <rect x="32" y="100" width="16" height="22" rx="2" fill="#e8d8b0" stroke="#c0a870" stroke-width="1"/>
+  <!-- Gate arch -->
+  <rect x="16" y="54" width="8" height="56" rx="4" fill="#c8a060" stroke="#9a7030" stroke-width="2"/>
+  <rect x="56" y="54" width="8" height="56" rx="4" fill="#c8a060" stroke="#9a7030" stroke-width="2"/>
+  <path d="M 16 56 Q 40 30 64 56" fill="none" stroke="#c8a060" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 16 56 Q 40 30 64 56" fill="none" stroke="#9a7030" stroke-width="2" stroke-linecap="round"/>
+  <!-- Gate top ball -->
+  <circle cx="40" cy="28" r="6" fill="#c8a060" stroke="#9a7030" stroke-width="2"/>
+  <circle cx="40" cy="28" r="3" fill="#e8c880"/>
+  <!-- Left tree -->
+  <rect x="6" y="88" width="6" height="34" rx="3" fill="#8a6030" stroke="#6a4020" stroke-width="1.5"/>
+  <ellipse cx="9" cy="78" rx="14" ry="18" fill="#5ab848" stroke="#3a8828" stroke-width="1.5"/>
+  <ellipse cx="9" cy="70" rx="10" ry="12" fill="#6ecc58"/>
+  <!-- Right tree -->
+  <rect x="68" y="88" width="6" height="34" rx="3" fill="#8a6030" stroke="#6a4020" stroke-width="1.5"/>
+  <ellipse cx="71" cy="78" rx="14" ry="18" fill="#5ab848" stroke="#3a8828" stroke-width="1.5"/>
+  <ellipse cx="71" cy="70" rx="10" ry="12" fill="#6ecc58"/>
+  <!-- Sign -->
+  <rect x="27" y="18" width="26" height="12" rx="3" fill="#5ab848" stroke="#3a8828" stroke-width="1.5"/>
+  <text x="40" y="28" text-anchor="middle" font-family="sans-serif" font-size="7" fill="white" font-weight="bold">공원</text>
+</svg>

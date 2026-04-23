@@ -15,7 +15,9 @@
       "Bash([ -d \"$PACKAGE_ROOT/.reference/lessons\" ])",
       "Bash(cp '/f/Personal_project/Game_Work_Pipeline/oh-my-game-claudecode/tools/hooks/*.cjs' ./tools/hooks/)",
       "Bash(cp /f/Personal_project/Game_Work_Pipeline/oh-my-game-claudecode/.claude/settings.local.json ./.claude/settings.local.json)",
-      "Bash(cat)"
+      "Bash(cat)",
+      "Bash(node -e ' *)",
+      "Bash(git push *)"
     ]
   }
 }

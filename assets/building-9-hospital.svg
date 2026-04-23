@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 140">
+  <!-- Wall -->
+  <rect x="8" y="46" width="64" height="92" rx="4" fill="#ffffff" stroke="#c0c8d8" stroke-width="2"/>
+  <!-- Roof -->
+  <rect x="4" y="38" width="72" height="12" rx="3" fill="#ff8f8f" stroke="#d05050" stroke-width="2"/>
+  <!-- Red cross sign -->
+  <rect x="30" y="18" width="20" height="20" rx="3" fill="white" stroke="#d05050" stroke-width="2"/>
+  <rect x="37" y="22" width="6" height="12" rx="2" fill="#d05050"/>
+  <rect x="33" y="26" width="14" height="4" rx="2" fill="#d05050"/>
+  <!-- Windows row 1 -->
+  <rect x="12" y="58" width="16" height="14" rx="2" fill="#daf2ff" stroke="#c0c8d8" stroke-width="1.5"/>
+  <rect x="32" y="58" width="16" height="14" rx="2" fill="#daf2ff" stroke="#c0c8d8" stroke-width="1.5"/>
+  <rect x="52" y="58" width="16" height="14" rx="2" fill="#daf2ff" stroke="#c0c8d8" stroke-width="1.5"/>
+  <!-- Windows row 2 -->
+  <rect x="12" y="78" width="16" height="14" rx="2" fill="#daf2ff" stroke="#c0c8d8" stroke-width="1.5"/>
+  <rect x="52" y="78" width="16" height="14" rx="2" fill="#daf2ff" stroke="#c0c8d8" stroke-width="1.5"/>
+  <!-- Door -->
+  <rect x="28" y="108" width="24" height="30" rx="4" fill="#c8d8e8" stroke="#a0b0c0" stroke-width="1.5"/>
+  <line x1="40" y1="108" x2="40" y2="138" stroke="#a0b0c0" stroke-width="2"/>
+  <!-- Hospital name -->
+  <rect x="32" y="78" width="16" height="14" rx="2" fill="#fff0f0" stroke="#d05050" stroke-width="1"/>
+  <text x="40" y="89" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#d05050" font-weight="bold">병원</text>
+</svg>

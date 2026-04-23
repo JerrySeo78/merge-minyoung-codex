@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 140">
+  <!-- Wall -->
+  <rect x="8" y="62" width="64" height="76" rx="4" fill="#fff1f6" stroke="#c06090" stroke-width="2"/>
+  <!-- Triangle roof -->
+  <polygon points="4,66 40,18 76,66" fill="#ff90b0" stroke="#c06090" stroke-width="2.5"/>
+  <!-- Roof flower decoration -->
+  <circle cx="40" cy="20" r="5" fill="#ff5888"/>
+  <circle cx="40" cy="20" r="3" fill="#ffbbcc"/>
+  <!-- Sign -->
+  <rect x="16" y="70" width="48" height="13" rx="3" fill="#e04080" stroke="#b02060" stroke-width="1"/>
+  <text x="40" y="80" text-anchor="middle" font-family="sans-serif" font-size="8" fill="white" font-weight="bold">꽃집</text>
+  <!-- Flower display window -->
+  <rect x="10" y="88" width="26" height="24" rx="3" fill="#ffeaf4" stroke="#c06090" stroke-width="1.5"/>
+  <!-- Flowers in window -->
+  <circle cx="18" cy="97" r="5" fill="#ff6090"/>
+  <circle cx="18" cy="97" r="2.5" fill="#ffbbcc"/>
+  <circle cx="28" cy="95" r="4.5" fill="#ff80a0"/>
+  <circle cx="28" cy="95" r="2" fill="#ffd0e0"/>
+  <circle cx="22" cy="104" r="4" fill="#ff4870"/>
+  <circle cx="22" cy="104" r="2" fill="#ffbbcc"/>
+  <rect x="44" y="88" width="26" height="24" rx="3" fill="#ffeaf4" stroke="#c06090" stroke-width="1.5"/>
+  <circle cx="53" cy="97" r="4.5" fill="#ffaacc"/>
+  <circle cx="63" cy="95" r="4" fill="#ff80b0"/>
+  <circle cx="57" cy="104" r="4" fill="#ff6090"/>
+  <!-- Door -->
+  <rect x="30" y="114" width="20" height="24" rx="4" fill="#e890b0" stroke="#c06080" stroke-width="1.5"/>
+  <circle cx="37.5" cy="128" r="2.5" fill="#ff6090"/>
+</svg>
