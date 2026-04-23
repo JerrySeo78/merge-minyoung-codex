@@ -648,10 +648,11 @@ async function commitMove(originKey, targetKey) {
       statusTextElement.textContent = "설계도가 완성됐어요! 건물이 마을로 날아가요.";
       updateCounters();
       updateDispenserState();
-      // 포물선 비행 → 착지 후 팝인
-      await animateBuildingFlyToTown(targetKey, buildingIdx);
-      addBuildingToTown(buildingIdx);
-      statusTextElement.textContent = "건물 완성! 마을이 커졌어요.";
+      // 포물선 비행 → 착지 후 팝인 (fire-and-forget: 잠금 해제 후 백그라운드 실행)
+      animateBuildingFlyToTown(targetKey, buildingIdx).then(() => {
+        addBuildingToTown(buildingIdx);
+        statusTextElement.textContent = "건물 완성! 마을이 커졌어요.";
+      });
 
     } else {
       // Reject
