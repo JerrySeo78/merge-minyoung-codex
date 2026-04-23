@@ -382,14 +382,43 @@ function addBuildingToTown(index) {
 function updateBuildingStage(index, stage) {
   const el = buildingEls[index];
   if (!el) return;
-  el.classList.remove("stage-1", "stage-2", "stage-3");
+  el.classList.remove("stage-1", "stage-2");
   if (stage < 3) {
     el.classList.add(`stage-${stage}`);
   }
-  // 완성 시 팝 애니메이션
   if (stage === 3) {
     el.classList.add("building-complete");
     setTimeout(() => el.classList.remove("building-complete"), 700);
+    spawnBuildingParticles(el);
+  }
+}
+
+function spawnBuildingParticles(el) {
+  const rect   = el.getBoundingClientRect();
+  const cx     = rect.left + rect.width  / 2;
+  const cy     = rect.top  + rect.height / 2;
+  const colors = ["#ffbe2f", "#ff8a1f", "#4fcf64", "#88c8e8", "#f08f54", "#ffffff"];
+  const COUNT  = 22;
+
+  for (let i = 0; i < COUNT; i++) {
+    const p   = document.createElement("span");
+    const ang = (i / COUNT) * Math.PI * 2;
+    const spd = 60 + Math.random() * 80;
+    const tx  = Math.cos(ang) * spd;
+    const ty  = Math.sin(ang) * spd;
+    const sz  = 5 + Math.random() * 6;
+    p.style.cssText = `
+      position:fixed; left:${cx}px; top:${cy}px;
+      width:${sz}px; height:${sz}px;
+      border-radius:50%;
+      background:${colors[i % colors.length]};
+      pointer-events:none; z-index:999;
+      transform:translate(-50%,-50%);
+      animation:bldgParticle 0.7s ease-out forwards;
+      --tx:${tx}px; --ty:${ty}px;
+    `;
+    document.body.appendChild(p);
+    p.addEventListener("animationend", () => p.remove(), { once: true });
   }
 }
 
