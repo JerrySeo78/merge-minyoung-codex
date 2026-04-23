@@ -140,12 +140,17 @@ function buildBoardSlots() {
 }
 
 function seedInitialItems() {
-  const openKeys = positions.map((p) => p.key).filter((k) => k !== dispenserKey);
-  const shuffled = [...openKeys].sort(() => Math.random() - 0.5);
-  board.set(dispenserKey, createDispenser());
-  board.set(shuffled[0], createItem(1));
-  board.set(shuffled[1], createItem(1));
-  board.set(shuffled[2], createItem(2));
+  board.set(dispenserKey, createDispenser());        // col 2, row 3 (center)
+  // 각 레벨 1개씩 — 보드 구석에 산재
+  board.set(key(0, 0), createItem(1));               // 나무 토막
+  board.set(key(5, 0), createItem(2));               // 판자
+  board.set(key(0, 3), createItem(3));               // 벽돌
+  board.set(key(5, 3), createItem(4));               // 철근
+  board.set(key(0, 6), createItem(5));               // 유리창
+  board.set(key(5, 6), createItem(6));               // 지붕 기와
+  // 설계도 2개 — 바로 머지 가능하도록 하단 인접 배치
+  board.set(key(2, 7), createItem(7));               // 설계도
+  board.set(key(3, 7), createItem(7));               // 설계도
 }
 
 function updateBoardGeometry() {
@@ -241,11 +246,90 @@ function resetDiorama() {
   isWalkingToBuilding = false;
   if (brownCharacterElement) {
     brownCharacterElement.style.setProperty("--brown-left", "20px");
-    brownCharacterElement.classList.remove("facing-right", "facing-left");
+    brownCharacterElement.classList.remove("facing-left");
+    brownCharacterElement.classList.add("facing-right");
   }
 
   // Scroll back to start
   if (dioramaViewportElement) dioramaViewportElement.scrollLeft = 0;
+}
+
+async function animateBuildingFlyToTown(fromBoardKey, index) {
+  if (!dioramaSceneElement || !dioramaViewportElement) return;
+  if (index >= TOWN_BUILDINGS.length) return;
+
+  const def  = TOWN_BUILDINGS[index];
+  const xPos = BUILDING_START_X + index * BUILDING_SLOT_WIDTH;
+
+  // Expand scene and scroll first
+  const neededWidth = xPos + BUILDING_SLOT_WIDTH + 80;
+  const currentWidth = dioramaSceneElement.offsetWidth || 400;
+  if (neededWidth > currentWidth) {
+    dioramaSceneElement.style.width = `${neededWidth}px`;
+  }
+  dioramaViewportElement.scrollTo({ left: Math.max(0, xPos - 80), behavior: "smooth" });
+  await wait(380); // scroll 완료 대기
+
+  // 출발점: 보드 셀 화면 좌표
+  const boardRect = boardElement.getBoundingClientRect();
+  const pos       = positionLookup.get(fromBoardKey);
+  if (!pos) return;
+  const startX = boardRect.left + pos.x + layoutMetrics.cellSize / 2;
+  const startY = boardRect.top  + pos.y + layoutMetrics.cellSize / 2;
+
+  // 도착점: 디오라마 내 건물 슬롯 화면 좌표
+  const vpRect    = dioramaViewportElement.getBoundingClientRect();
+  const scrollLeft = dioramaViewportElement.scrollLeft;
+  const endX = vpRect.left + (xPos - scrollLeft) + 26;
+  const endY = vpRect.bottom - 72;
+
+  const dx = endX - startX;
+  const dy = endY - startY;
+
+  // 플라이 엘리먼트 생성
+  const flyEl = document.createElement("div");
+  flyEl.className = "building-fly";
+  flyEl.style.left = `${startX}px`;
+  flyEl.style.top  = `${startY}px`;
+  flyEl.style.transform = "translate(-50%, -50%) scale(0.25)";
+  flyEl.style.opacity   = "0";
+
+  const img     = document.createElement("img");
+  img.src       = def.img;
+  img.alt       = def.name;
+  img.draggable = false;
+  flyEl.appendChild(img);
+  document.body.appendChild(flyEl);
+
+  // requestAnimationFrame 기반 포물선 비행
+  const DURATION = 820;
+  const startTime = performance.now();
+
+  await new Promise((resolve) => {
+    function frame(now) {
+      const t    = Math.min((now - startTime) / DURATION, 1);
+      const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+      const x     = startX + dx * ease;
+      const arc   = Math.sin(Math.PI * t) * Math.min(120, Math.abs(dy) * 0.7);
+      const y     = startY + dy * ease - arc;
+      const scale = 0.25 + ease * 0.75;
+      const alpha = t < 0.08 ? t / 0.08 : t > 0.84 ? (1 - t) / 0.16 : 1;
+
+      flyEl.style.left      = `${x}px`;
+      flyEl.style.top       = `${y}px`;
+      flyEl.style.transform = `translate(-50%, -50%) scale(${scale})`;
+      flyEl.style.opacity   = String(alpha);
+
+      if (t < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        flyEl.remove();
+        resolve();
+      }
+    }
+    requestAnimationFrame(frame);
+  });
 }
 
 function addBuildingToTown(index) {
@@ -255,15 +339,8 @@ function addBuildingToTown(index) {
   const def  = TOWN_BUILDINGS[index];
   const xPos = BUILDING_START_X + index * BUILDING_SLOT_WIDTH;
 
-  // Expand scene width so the new building fits
-  const neededWidth = xPos + BUILDING_SLOT_WIDTH + 80;
-  const currentWidth = dioramaSceneElement.offsetWidth || 400;
-  if (neededWidth > currentWidth) {
-    dioramaSceneElement.style.width = `${neededWidth}px`;
-  }
-
-  // Build element
-  const buildingEl = document.createElement("div");
+  // 건물 엘리먼트 생성 및 팝인
+  const buildingEl      = document.createElement("div");
   buildingEl.className  = "diorama-building building-new";
   buildingEl.style.left = `${xPos}px`;
 
@@ -273,27 +350,17 @@ function addBuildingToTown(index) {
   img.draggable = false;
   buildingEl.appendChild(img);
 
-  // Insert before brown character so brown stays on top
+  // 브라운 앞에 삽입
   dioramaSceneElement.insertBefore(buildingEl, brownCharacterElement);
 
-  // Scroll viewport to show new building
-  setTimeout(() => {
-    dioramaViewportElement.scrollTo({ left: Math.max(0, xPos - 80), behavior: "smooth" });
-  }, 400);
-
-  // Walk brown to the new building
-  isWalkingToBuilding = true;
-  walkBrownTo(Math.max(0, xPos - 32));
-  setTimeout(() => {
-    isWalkingToBuilding = false;
-    if (brownCharacterElement) brownCharacterElement.classList.remove("facing-right", "facing-left");
-  }, 2200);
-
-  // Remove animation class after it plays
   setTimeout(() => buildingEl.classList.remove("building-new"), 700);
 
+  // 브라운 이동
+  isWalkingToBuilding = true;
+  walkBrownTo(Math.max(0, xPos - 32));
+  setTimeout(() => { isWalkingToBuilding = false; }, 2200);
+
   updateBrownMood(`${def.name} 완성! 브라운이 달려가고 있어요.`);
-  playBuildingCompleteSound();
 }
 
 function walkBrownTo(x) {
@@ -318,11 +385,7 @@ function startBrownWander() {
     const visibleWidth = dioramaViewportElement.clientWidth;
     const targetX = visibleStart + 20 + Math.random() * Math.max(0, visibleWidth - 160);
     walkBrownTo(targetX);
-    setTimeout(() => {
-      if (!isWalkingToBuilding && brownCharacterElement) {
-        brownCharacterElement.classList.remove("facing-right", "facing-left");
-      }
-    }, 1800);
+    // 정면 모션 없이 마지막 방향 유지 (클래스 제거 안 함)
   }, 5000);
 }
 
@@ -516,7 +579,7 @@ async function commitMove(originKey, targetKey) {
       originItem.level === MAX_LEVEL &&
       targetItem.level === MAX_LEVEL
     ) {
-      // Building merge → both cells cleared, building added to town
+      // Building merge → both cells cleared, building flies to town
       await animateMerge(originKey, targetKey, MAX_LEVEL);
       board.delete(originKey);
       board.delete(targetKey);
@@ -525,11 +588,16 @@ async function commitMove(originKey, targetKey) {
       score  += 1400;
       highestLevel = Math.max(highestLevel, MAX_LEVEL);
       stageGrowthCount = Math.min(TOWN_BUILDINGS.length, stageGrowthCount + 1);
-      addBuildingToTown(stageGrowthCount - 1);
-      playMergeSound(MAX_LEVEL + 1);
-      statusTextElement.textContent = "건물 완성! 마을이 커졌어요.";
+      const buildingIdx = stageGrowthCount - 1;
+      renderBoard(); // 빈 칸 즉시 반영
+      playBuildingCompleteSound();
+      statusTextElement.textContent = "설계도가 완성됐어요! 건물이 마을로 날아가요.";
       updateCounters();
       updateDispenserState();
+      // 포물선 비행 → 착지 후 팝인
+      await animateBuildingFlyToTown(targetKey, buildingIdx);
+      addBuildingToTown(buildingIdx);
+      statusTextElement.textContent = "건물 완성! 마을이 커졌어요.";
 
     } else {
       // Reject
