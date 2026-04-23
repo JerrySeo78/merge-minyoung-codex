@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80" role="img" aria-label="butterfly">
+  <path fill="#e77d9b" d="M47 38C27 8 4 14 7 39c2 20 25 20 40-1Z"/>
+  <path fill="#f2b84b" d="M53 38C73 8 96 14 93 39c-2 20-25 20-40-1Z"/>
+  <path fill="#c96798" d="M47 43C28 70 8 65 13 46c5-15 22-15 34-3Z"/>
+  <path fill="#72b6c9" d="M53 43c19 27 39 22 34 3-5-15-22-15-34-3Z"/>
+  <rect x="46" y="29" width="8" height="28" rx="4" fill="#503a40"/>
+  <path fill="none" stroke="#503a40" stroke-linecap="round" stroke-width="3" d="M48 31c-6-8-12-10-18-9M52 31c6-8 12-10 18-9"/>
+</svg>

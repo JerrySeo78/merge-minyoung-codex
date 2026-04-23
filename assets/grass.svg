@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" role="img" aria-label="grass">
+  <g fill="none" stroke-linecap="round">
+    <path stroke="#3f8a4d" stroke-width="8" d="M16 72C19 48 28 30 40 13M38 72c4-26 10-43 22-62M59 72c1-24 2-43 1-63M80 72C76 47 73 29 67 12M101 72C95 48 86 29 75 13"/>
+    <path stroke="#80bf62" stroke-width="6" d="M25 72c8-17 15-28 30-38M51 72c7-18 17-32 31-44M72 72c4-16 12-28 27-38"/>
+  </g>
+  <ellipse cx="60" cy="73" rx="50" ry="7" fill="#7fba5d" opacity=".45"/>
+</svg>

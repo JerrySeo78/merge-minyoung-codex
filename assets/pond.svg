@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 80" role="img" aria-label="pond">
+  <path fill="#4ea5b8" d="M13 48c7-21 36-35 68-32 33 3 57 18 56 37-1 17-29 25-64 24-35-1-66-10-60-29Z"/>
+  <path fill="#a8edf1" opacity=".78" d="M35 47c16-11 42-17 68-10 6 2 5 9-1 8-24-4-45-1-62 8-6 3-11-2-5-6Z"/>
+  <path fill="#6fbd64" d="M116 35c10-12 21-12 29-4-8 10-18 12-29 4Z"/>
+  <circle cx="112" cy="35" r="4" fill="#f3d45f"/>
+</svg>

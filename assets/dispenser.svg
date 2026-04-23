@@ -1,0 +1,18 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pot" x1="22" y1="28" x2="74" y2="78" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE8A1"/>
+      <stop offset="1" stop-color="#F0A03C"/>
+    </linearGradient>
+    <linearGradient id="nectar" x1="48" y1="20" x2="48" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF4C0"/>
+      <stop offset="1" stop-color="#FFB649"/>
+    </linearGradient>
+  </defs>
+  <path d="M26 28H70L66 70C65 78 59 84 51 84H45C37 84 31 78 30 70L26 28Z" fill="url(#pot)"/>
+  <path d="M30 28C30 18.059 38.059 10 48 10C57.941 10 66 18.059 66 28V34H30V28Z" fill="#8FD388"/>
+  <path d="M40 22C42 18 45 16 48 16C52 16 55 18 57 22" stroke="#E9FFD8" stroke-width="5" stroke-linecap="round"/>
+  <path d="M35 36H61V52C61 58.627 55.627 64 49 64H47C40.373 64 35 58.627 35 52V36Z" fill="url(#nectar)"/>
+  <path d="M48 62C45 68 41 72 41 77C41 81.418 44.582 85 49 85C53.418 85 57 81.418 57 77C57 72 53 68 48 62Z" fill="#FFB649"/>
+  <circle cx="36" cy="44" r="4" fill="white" fill-opacity=".46"/>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 80" role="img" aria-label="pebbles">
+  <ellipse cx="35" cy="52" rx="25" ry="15" fill="#9ca79a"/>
+  <ellipse cx="69" cy="46" rx="31" ry="19" fill="#b9b7a5"/>
+  <ellipse cx="108" cy="55" rx="27" ry="15" fill="#8d9a8f"/>
+  <path fill="#fff" opacity=".25" d="M20 47c8-7 20-9 30-4 4 2 2 6-2 5-10-4-17-2-24 3-4 3-8-1-4-4ZM57 38c12-8 27-8 39-1 4 2 2 7-3 5-12-5-22-4-32 2-5 3-9-2-4-6Z"/>
+</svg>

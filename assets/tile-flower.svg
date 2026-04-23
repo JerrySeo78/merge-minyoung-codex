@@ -1,0 +1,20 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="petal" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(48 48) rotate(90) scale(32)">
+      <stop stop-color="#FFD6E0"/>
+      <stop offset="1" stop-color="#FF6D88"/>
+    </radialGradient>
+  </defs>
+  <g fill="url(#petal)">
+    <ellipse cx="48" cy="24" rx="12" ry="18"/>
+    <ellipse cx="48" cy="72" rx="12" ry="18"/>
+    <ellipse cx="24" cy="48" rx="18" ry="12"/>
+    <ellipse cx="72" cy="48" rx="18" ry="12"/>
+    <ellipse cx="31" cy="31" rx="11" ry="16" transform="rotate(-45 31 31)"/>
+    <ellipse cx="65" cy="65" rx="11" ry="16" transform="rotate(-45 65 65)"/>
+    <ellipse cx="31" cy="65" rx="11" ry="16" transform="rotate(45 31 65)"/>
+    <ellipse cx="65" cy="31" rx="11" ry="16" transform="rotate(45 65 31)"/>
+  </g>
+  <circle cx="48" cy="48" r="14" fill="#FFE06B"/>
+  <circle cx="48" cy="48" r="5" fill="#FFF8D2"/>
+</svg>
