@@ -243,11 +243,19 @@ button {
   bottom: 36px;
   transform-origin: bottom center;
   pointer-events: none;
-  transition: filter 1.4s ease;
+  transition: clip-path 1.0s cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
-.diorama-building.under-construction {
-  filter: grayscale(85%) sepia(25%) brightness(0.68) contrast(0.88);
+.diorama-building.stage-1 {
+  clip-path: inset(67% 0 0 0);
+}
+
+.diorama-building.stage-2 {
+  clip-path: inset(50% 0 0 0);
+}
+
+.diorama-building.building-complete {
+  animation: buildingPop 560ms cubic-bezier(0.18, 0.86, 0.2, 1);
 }
 
 .diorama-building img {

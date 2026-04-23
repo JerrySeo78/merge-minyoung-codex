@@ -74,7 +74,10 @@ let highestLevel       = 1;
 let dispenserKey       = key(2, 3);
 let audioContext       = null;
 let noiseBuffer        = null;
-let stageGrowthCount   = 0;
+let completedBuildings = 0;
+let startedBuildings   = 0;
+let buildingStages     = new Array(TOWN_BUILDINGS.length).fill(0); // 0=미착공 1=1/3 2=1/2 3=완성
+const buildingEls      = new Array(TOWN_BUILDINGS.length).fill(null);
 let brownBubbleTimer   = null;
 let brownLeft          = 20;
 let isWalkingToBuilding = false;
@@ -120,8 +123,11 @@ function resetGame() {
   moves        = 0;
   merges       = 0;
   score        = 0;
-  highestLevel = 1;
-  stageGrowthCount = 0;
+  highestLevel       = 1;
+  completedBuildings = 0;
+  startedBuildings   = 0;
+  buildingStages     = new Array(TOWN_BUILDINGS.length).fill(0);
+  buildingEls.fill(null);
   dispenserKey = key(2, 3);
 
   boardElement.innerHTML = "";
@@ -350,7 +356,7 @@ function addBuildingToTown(index) {
 
   // 건물 엘리먼트 생성 및 팝인
   const buildingEl      = document.createElement("div");
-  buildingEl.className  = "diorama-building building-new under-construction";
+  buildingEl.className  = "diorama-building building-new stage-1";
   buildingEl.style.left = `${xPos}px`;
 
   const img     = document.createElement("img");
@@ -359,19 +365,32 @@ function addBuildingToTown(index) {
   img.draggable = false;
   buildingEl.appendChild(img);
 
-  // 브라운 앞에 삽입
   dioramaSceneElement.insertBefore(buildingEl, brownCharacterElement);
+  buildingEls[index] = buildingEl;
 
   setTimeout(() => buildingEl.classList.remove("building-new"), 700);
-  setTimeout(() => buildingEl.classList.remove("under-construction"), 2000);
 
   // 브라운 이동
   isWalkingToBuilding = true;
   walkBrownTo(Math.max(0, xPos - 32));
   setTimeout(() => { isWalkingToBuilding = false; }, 2200);
 
-  updateBrownMood(`${def.name} 완성! 브라운이 달려가고 있어요.`);
+  updateBrownMood(`${def.name} 착공! 브라운이 달려가고 있어요.`);
   updateBrownSpeed();
+}
+
+function updateBuildingStage(index, stage) {
+  const el = buildingEls[index];
+  if (!el) return;
+  el.classList.remove("stage-1", "stage-2", "stage-3");
+  if (stage < 3) {
+    el.classList.add(`stage-${stage}`);
+  }
+  // 완성 시 팝 애니메이션
+  if (stage === 3) {
+    el.classList.add("building-complete");
+    setTimeout(() => el.classList.remove("building-complete"), 700);
+  }
 }
 
 function walkBrownTo(x) {
@@ -390,7 +409,7 @@ function walkBrownTo(x) {
 }
 
 function getBrownWalkConfig() {
-  const t = Math.min(stageGrowthCount / TOWN_BUILDINGS.length, 1);
+  const t = Math.min(completedBuildings / TOWN_BUILDINGS.length, 1);
   return {
     transitionSec:    1.4 - t * 0.8,   // 1.4s → 0.6s
     wanderIntervalMs: 5000 - t * 3000,  // 5000ms → 2000ms
@@ -643,32 +662,50 @@ async function commitMove(originKey, targetKey) {
       originItem.level === getBlueprintLevel() &&
       targetItem.level === getBlueprintLevel()
     ) {
-      // Building merge → both cells cleared, building flies to town
+      // Building merge → advance construction stage or start new building
       const prevBlueprintLevel = getBlueprintLevel();
       await animateMerge(originKey, targetKey, prevBlueprintLevel);
       board.delete(originKey);
       board.delete(targetKey);
       moves  += 1;
       merges += 1;
-      score  += 200 * Math.pow(2, prevBlueprintLevel - 2);
+      score  += Math.round(200 * Math.pow(2, prevBlueprintLevel - 2) / 3);
       highestLevel = Math.max(highestLevel, prevBlueprintLevel);
-      stageGrowthCount = Math.min(TOWN_BUILDINGS.length, stageGrowthCount + 1);
-      const buildingIdx    = stageGrowthCount - 1;
-      const newBlueprintLevel = getBlueprintLevel();
-      const tieredUp       = newBlueprintLevel > prevBlueprintLevel;
       renderBoard();
       playBuildingCompleteSound();
-      statusTextElement.textContent = "도면이 완성됐어요! 건물이 마을로 날아가요.";
       updateCounters();
       updateDispenserState();
-      animateBuildingFlyToTown(targetKey, buildingIdx).then(() => {
-        addBuildingToTown(buildingIdx);
-        if (tieredUp) {
-          updateBrownMood(`${newBlueprintLevel}단계 도면 해금! 이제 더 높은 재료로 건물을 지어요.`);
+
+      const inProgressIdx = buildingStages.findIndex(s => s >= 1 && s < 3);
+
+      if (inProgressIdx >= 0) {
+        // 공사 중인 건물을 한 단계 올림
+        const newStage = buildingStages[inProgressIdx] + 1;
+        buildingStages[inProgressIdx] = newStage;
+        const isComplete = newStage === 3;
+        if (isComplete) completedBuildings++;
+        const newBlueprintLevel = getBlueprintLevel();
+        const tieredUp = newBlueprintLevel > prevBlueprintLevel;
+        updateBuildingStage(inProgressIdx, newStage);
+        if (isComplete) {
+          if (tieredUp) {
+            updateBrownMood(`${newBlueprintLevel}단계 도면 해금! 이제 더 높은 재료로 건물을 지어요.`);
+          } else {
+            updateBrownMood(`${TOWN_BUILDINGS[inProgressIdx].name} 완성! 브라운이 기뻐해요.`);
+          }
         } else {
-          statusTextElement.textContent = "건물 완성! 마을이 커졌어요.";
+          const progressMsg = newStage === 2 ? "절반 완성!" : "공사 시작!";
+          updateBrownMood(`${TOWN_BUILDINGS[inProgressIdx].name} ${progressMsg}`);
         }
-      });
+      } else if (startedBuildings < TOWN_BUILDINGS.length) {
+        // 새 건물 착공 (stage 1)
+        const slot = startedBuildings++;
+        buildingStages[slot] = 1;
+        statusTextElement.textContent = "도면이 완성됐어요! 건물이 마을로 날아가요.";
+        animateBuildingFlyToTown(targetKey, slot).then(() => {
+          addBuildingToTown(slot);
+        });
+      }
 
     } else {
       // Reject
@@ -876,7 +913,7 @@ function wait(ms) {
 
 function getBlueprintLevel() {
   for (let i = TIER_BLUEPRINT_LEVELS.length - 1; i >= 0; i--) {
-    if (stageGrowthCount >= TIER_THRESHOLDS[i]) return TIER_BLUEPRINT_LEVELS[i];
+    if (completedBuildings >= TIER_THRESHOLDS[i]) return TIER_BLUEPRINT_LEVELS[i];
   }
   return TIER_BLUEPRINT_LEVELS[0];
 }
