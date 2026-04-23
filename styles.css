@@ -148,6 +148,13 @@ button {
   scroll-behavior: smooth;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  cursor: grab;
+  user-select: none;
+}
+
+.diorama-viewport.is-dragging {
+  cursor: grabbing;
+  scroll-behavior: auto;
 }
 
 .diorama-viewport::-webkit-scrollbar {
@@ -257,7 +264,7 @@ button {
   width: 128px;
   height: 146px;
   z-index: 10;
-  transition: left 1.4s ease-in-out;
+  transition: left var(--brown-walk-speed, 1.4s) ease-in-out;
   animation: brownBounce 850ms ease-in-out infinite;
   transform: scale(0.5);
   transform-origin: bottom left;

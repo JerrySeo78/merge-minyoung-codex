@@ -361,6 +361,7 @@ function addBuildingToTown(index) {
   setTimeout(() => { isWalkingToBuilding = false; }, 2200);
 
   updateBrownMood(`${def.name} 완성! 브라운이 달려가고 있어요.`);
+  updateBrownSpeed();
 }
 
 function walkBrownTo(x) {
@@ -378,15 +379,68 @@ function walkBrownTo(x) {
   brownCharacterElement.style.setProperty("--brown-left", `${x}px`);
 }
 
+function getBrownWalkConfig() {
+  const t = Math.min(stageGrowthCount / TOWN_BUILDINGS.length, 1);
+  return {
+    transitionSec:    1.4 - t * 0.8,   // 1.4s → 0.6s
+    wanderIntervalMs: 5000 - t * 3000,  // 5000ms → 2000ms
+  };
+}
+
+function updateBrownSpeed() {
+  if (!brownCharacterElement) return;
+  const { transitionSec } = getBrownWalkConfig();
+  brownCharacterElement.style.setProperty("--brown-walk-speed", `${transitionSec.toFixed(2)}s`);
+}
+
 function startBrownWander() {
-  setInterval(() => {
-    if (isWalkingToBuilding || !dioramaViewportElement) return;
-    const visibleStart = dioramaViewportElement.scrollLeft;
-    const visibleWidth = dioramaViewportElement.clientWidth;
-    const targetX = visibleStart + 20 + Math.random() * Math.max(0, visibleWidth - 160);
-    walkBrownTo(targetX);
-    // 정면 모션 없이 마지막 방향 유지 (클래스 제거 안 함)
-  }, 5000);
+  function scheduleNext() {
+    const { wanderIntervalMs } = getBrownWalkConfig();
+    setTimeout(() => {
+      if (!isWalkingToBuilding && dioramaViewportElement) {
+        const visibleStart = dioramaViewportElement.scrollLeft;
+        const visibleWidth = dioramaViewportElement.clientWidth;
+        const targetX = visibleStart + 20 + Math.random() * Math.max(0, visibleWidth - 160);
+        walkBrownTo(targetX);
+      }
+      scheduleNext();
+    }, wanderIntervalMs);
+  }
+  scheduleNext();
+}
+
+function initDioramaDrag() {
+  const el = dioramaViewportElement;
+  if (!el) return;
+
+  let startX       = 0;
+  let scrollStart  = 0;
+  let isDragging   = false;
+  let hasMoved     = false;
+
+  el.addEventListener("mousedown", (e) => {
+    startX      = e.clientX;
+    scrollStart = el.scrollLeft;
+    isDragging  = true;
+    hasMoved    = false;
+  });
+
+  window.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    if (!hasMoved && Math.abs(dx) > 4) {
+      hasMoved = true;
+      el.classList.add("is-dragging");
+    }
+    if (hasMoved) el.scrollLeft = scrollStart - dx;
+  });
+
+  window.addEventListener("mouseup", () => {
+    if (!isDragging) return;
+    isDragging = false;
+    hasMoved   = false;
+    el.classList.remove("is-dragging");
+  });
 }
 
 // ─── Input: drag & drop ───────────────────────────────────────
@@ -924,3 +978,4 @@ window.addEventListener("keydown", (e) => {
 
 resetGame();
 startBrownWander();
+initDioramaDrag();
