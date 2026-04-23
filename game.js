@@ -907,5 +907,20 @@ guideButton?.addEventListener("click", openGuideModal);
 guideCloseButton?.addEventListener("click", closeGuideModal);
 guideBackdrop?.addEventListener("click", closeGuideModal);
 
+window.addEventListener("keydown", (e) => {
+  if (e.key.toLowerCase() !== "b" || inputLocked) return;
+  const emptyKeys = positions.map((p) => p.key).filter((k) => !board.has(k));
+  if (emptyKeys.length === 0) {
+    statusTextElement.textContent = "빈 칸이 없어서 설계도를 놓을 수 없어요.";
+    return;
+  }
+  const targetKey = emptyKeys[Math.floor(Math.random() * emptyKeys.length)];
+  board.set(targetKey, createItem(7));
+  highestLevel = Math.max(highestLevel, 7);
+  renderBoard();
+  updateCounters();
+  statusTextElement.textContent = "🔧 치트! 설계도가 나타났어요.";
+});
+
 resetGame();
 startBrownWander();
