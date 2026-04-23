@@ -940,3 +940,15 @@ button {
     height: 180px;
   }
 }
+
+.version-badge {
+  position: fixed;
+  bottom: max(6px, env(safe-area-inset-bottom));
+  right: 8px;
+  font-size: 10px;
+  line-height: 1;
+  color: rgba(129, 92, 55, 0.45);
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
