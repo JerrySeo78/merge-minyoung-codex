@@ -1,6 +1,13 @@
 const BOARD_COLS = 6;
 const BOARD_ROWS = 8;
 const MAX_LEVEL = 7;
+const TIER_BLUEPRINT_LEVELS = [3, 4, 5];
+const TIER_THRESHOLDS       = [0, 4, 8];   // 건물 몇 개부터 다음 티어
+const TIER_SPAWN_WEIGHTS    = [
+  [[1, 65], [2, 35]],
+  [[1, 50], [2, 35], [3, 15]],
+  [[1, 40], [2, 30], [3, 20], [4, 10]],
+];
 const ITEM_DEFS = [
   { level: 1, id: "wood",      label: "나무 토막", color: "#c8905a", img: "assets/item-1-wood.svg",      score: 10  },
   { level: 2, id: "plank",     label: "판자",      color: "#daa860", img: "assets/item-2-plank.svg",     score: 24  },
@@ -141,17 +148,16 @@ function buildBoardSlots() {
 }
 
 function seedInitialItems() {
-  board.set(dispenserKey, createDispenser());        // col 2, row 3 (center)
-  // 각 레벨 1개씩 — 보드 구석에 산재
-  board.set(key(0, 0), createItem(1));               // 나무 토막
-  board.set(key(5, 0), createItem(2));               // 판자
-  board.set(key(0, 3), createItem(3));               // 벽돌
-  board.set(key(5, 3), createItem(4));               // 철근
-  board.set(key(0, 6), createItem(5));               // 유리창
-  board.set(key(5, 6), createItem(6));               // 지붕 기와
-  // 설계도 2개 — 바로 머지 가능하도록 하단 인접 배치
-  board.set(key(2, 7), createItem(7));               // 설계도
-  board.set(key(3, 7), createItem(7));               // 설계도
+  board.set(dispenserKey, createDispenser());
+  board.set(key(0, 0), createItem(1));
+  board.set(key(5, 0), createItem(1));
+  board.set(key(0, 1), createItem(2));
+  board.set(key(5, 1), createItem(2));
+  board.set(key(0, 3), createItem(1));
+  board.set(key(5, 3), createItem(2));
+  board.set(key(0, 6), createItem(3));               // 도면 예시
+  board.set(key(2, 7), createItem(3));               // 도면 (바로 머지 가능)
+  board.set(key(3, 7), createItem(3));               // 도면 (바로 머지 가능)
 }
 
 function updateBoardGeometry() {
@@ -202,8 +208,9 @@ function renderBoard() {
     element.style.setProperty("--x", `${position.x}px`);
     element.style.setProperty("--y", `${position.y}px`);
     element.dataset.key = position.key;
-    element.classList.toggle("dispenser", isDispenser);
-    element.classList.toggle("selected",  selectedKey === position.key);
+    element.classList.toggle("dispenser",       isDispenser);
+    element.classList.toggle("selected",        selectedKey === position.key);
+    element.classList.toggle("blueprint-ready", !isDispenser && item.level === getBlueprintLevel());
     element.setAttribute("aria-label", isDispenser ? "자재 창고" : `${def.label} 아이템`);
   });
 
@@ -342,7 +349,7 @@ function addBuildingToTown(index) {
 
   // 건물 엘리먼트 생성 및 팝인
   const buildingEl      = document.createElement("div");
-  buildingEl.className  = "diorama-building building-new";
+  buildingEl.className  = "diorama-building building-new under-construction";
   buildingEl.style.left = `${xPos}px`;
 
   const img     = document.createElement("img");
@@ -355,6 +362,7 @@ function addBuildingToTown(index) {
   dioramaSceneElement.insertBefore(buildingEl, brownCharacterElement);
 
   setTimeout(() => buildingEl.classList.remove("building-new"), 700);
+  setTimeout(() => buildingEl.classList.remove("under-construction"), 2000);
 
   // 브라운 이동
   isWalkingToBuilding = true;
@@ -611,7 +619,7 @@ async function commitMove(originKey, targetKey) {
       originItem.kind !== "dispenser" &&
       targetItem.kind !== "dispenser" &&
       originItem.level === targetItem.level &&
-      targetItem.level < MAX_LEVEL
+      targetItem.level < getBlueprintLevel()
     ) {
       // Normal merge → level + 1
       await animateMerge(originKey, targetKey, targetItem.level);
@@ -631,28 +639,34 @@ async function commitMove(originKey, targetKey) {
     } else if (
       originItem.kind !== "dispenser" &&
       targetItem.kind !== "dispenser" &&
-      originItem.level === MAX_LEVEL &&
-      targetItem.level === MAX_LEVEL
+      originItem.level === getBlueprintLevel() &&
+      targetItem.level === getBlueprintLevel()
     ) {
       // Building merge → both cells cleared, building flies to town
-      await animateMerge(originKey, targetKey, MAX_LEVEL);
+      const prevBlueprintLevel = getBlueprintLevel();
+      await animateMerge(originKey, targetKey, prevBlueprintLevel);
       board.delete(originKey);
       board.delete(targetKey);
       moves  += 1;
       merges += 1;
-      score  += 1400;
-      highestLevel = Math.max(highestLevel, MAX_LEVEL);
+      score  += 200 * Math.pow(2, prevBlueprintLevel - 2);
+      highestLevel = Math.max(highestLevel, prevBlueprintLevel);
       stageGrowthCount = Math.min(TOWN_BUILDINGS.length, stageGrowthCount + 1);
-      const buildingIdx = stageGrowthCount - 1;
-      renderBoard(); // 빈 칸 즉시 반영
+      const buildingIdx    = stageGrowthCount - 1;
+      const newBlueprintLevel = getBlueprintLevel();
+      const tieredUp       = newBlueprintLevel > prevBlueprintLevel;
+      renderBoard();
       playBuildingCompleteSound();
-      statusTextElement.textContent = "설계도가 완성됐어요! 건물이 마을로 날아가요.";
+      statusTextElement.textContent = "도면이 완성됐어요! 건물이 마을로 날아가요.";
       updateCounters();
       updateDispenserState();
-      // 포물선 비행 → 착지 후 팝인 (fire-and-forget: 잠금 해제 후 백그라운드 실행)
       animateBuildingFlyToTown(targetKey, buildingIdx).then(() => {
         addBuildingToTown(buildingIdx);
-        statusTextElement.textContent = "건물 완성! 마을이 커졌어요.";
+        if (tieredUp) {
+          updateBrownMood(`${newBlueprintLevel}단계 도면 해금! 이제 더 높은 재료로 건물을 지어요.`);
+        } else {
+          statusTextElement.textContent = "건물 완성! 마을이 커졌어요.";
+        }
       });
 
     } else {
@@ -753,7 +767,7 @@ async function handleDispenserTap(boardKey) {
     const chosen     = [...emptyKeys].sort(() => Math.random() - 0.5).slice(0, spawnCount);
 
     const spawnedEntries = chosen.map((nextKey) => {
-      const level = Math.random() < 0.14 && highestLevel >= 2 ? 2 : 1;
+      const level = randomSpawnLevel();
       const item  = createItem(level);
       board.set(nextKey, item);
       highestLevel = Math.max(highestLevel, level);
@@ -842,7 +856,7 @@ function countEmptySlots() {
 }
 
 function updateDispenserState() {
-  chargeCountElement.textContent = "사용 가능";
+  chargeCountElement.textContent = `${getBlueprintLevel()}단계 도면`;
 }
 
 function updateBrownMood(message) {
@@ -857,6 +871,25 @@ function updateBrownMood(message) {
 
 function wait(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+function getBlueprintLevel() {
+  for (let i = TIER_BLUEPRINT_LEVELS.length - 1; i >= 0; i--) {
+    if (stageGrowthCount >= TIER_THRESHOLDS[i]) return TIER_BLUEPRINT_LEVELS[i];
+  }
+  return TIER_BLUEPRINT_LEVELS[0];
+}
+
+function randomSpawnLevel() {
+  const tierIdx = TIER_BLUEPRINT_LEVELS.indexOf(getBlueprintLevel());
+  const weights = TIER_SPAWN_WEIGHTS[Math.min(tierIdx, TIER_SPAWN_WEIGHTS.length - 1)];
+  const total   = weights.reduce((s, [, w]) => s + w, 0);
+  let r = Math.random() * total;
+  for (const [level, weight] of weights) {
+    r -= weight;
+    if (r <= 0) return level;
+  }
+  return weights[0][0];
 }
 
 // ─── Audio ────────────────────────────────────────────────────
@@ -977,11 +1010,12 @@ window.addEventListener("keydown", (e) => {
     return;
   }
   const targetKey = emptyKeys[Math.floor(Math.random() * emptyKeys.length)];
-  board.set(targetKey, createItem(7));
-  highestLevel = Math.max(highestLevel, 7);
+  const bl = getBlueprintLevel();
+  board.set(targetKey, createItem(bl));
+  highestLevel = Math.max(highestLevel, bl);
   renderBoard();
   updateCounters();
-  statusTextElement.textContent = "🔧 치트! 설계도가 나타났어요.";
+  updateBrownMood(`치트! ${bl}단계 도면이 나타났어요.`);
 });
 
 resetGame();
