@@ -68,6 +68,7 @@ let dispenserKey       = key(2, 3);
 let audioContext       = null;
 let noiseBuffer        = null;
 let stageGrowthCount   = 0;
+let brownBubbleTimer   = null;
 let brownLeft          = 20;
 let isWalkingToBuilding = false;
 
@@ -124,7 +125,7 @@ function resetGame() {
   resetDiorama();
   updateCounters();
   updateDispenserState();
-  updateBrownMood("재료를 머지해서 마을을 건설해요!");
+  brownBubbleElement?.classList.remove("visible");
   statusTextElement.textContent = "아이템을 길게 눌러 빈 칸으로 옮기거나, 같은 단계 아이템 위에 드롭해서 머지하세요.";
 }
 
@@ -156,7 +157,7 @@ function seedInitialItems() {
 function updateBoardGeometry() {
   const shellWidth  = boardShellElement.clientWidth || 390;
   const innerWidth  = shellWidth - 32;
-  const cellSize    = Math.max(48, Math.min(60, (innerWidth - 5 * 5) / BOARD_COLS));
+  const cellSize    = Math.max(44, Math.min(52, (innerWidth - 5 * 5) / BOARD_COLS));
   const gap         = Math.max(4, Math.min(6, cellSize * 0.1));
   const boardWidth  = BOARD_COLS * cellSize + (BOARD_COLS - 1) * gap;
   const boardHeight = BOARD_ROWS * cellSize + (BOARD_ROWS - 1) * gap;
@@ -203,7 +204,7 @@ function renderBoard() {
     element.dataset.key = position.key;
     element.classList.toggle("dispenser", isDispenser);
     element.classList.toggle("selected",  selectedKey === position.key);
-    element.setAttribute("aria-label", isDispenser ? "화수분" : `${def.label} 아이템`);
+    element.setAttribute("aria-label", isDispenser ? "자재 창고" : `${def.label} 아이템`);
   });
 
   boardElement.querySelectorAll(".item").forEach((element) => {
@@ -659,7 +660,7 @@ async function commitMove(originKey, targetKey) {
       playRejectSound();
       statusTextElement.textContent =
         originItem.kind === "dispenser"
-          ? "화수분은 다른 아이템과 머지되지 않아요."
+          ? "자재 창고는 머지되지 않아요."
           : "같은 단계 재료끼리만 머지할 수 있어요.";
       selectedKey = originKey;
       renderBoard();
@@ -740,7 +741,7 @@ async function handleDispenserTap(boardKey) {
   const emptyKeys = getAdjacentEmptyKeys(boardKey);
   if (emptyKeys.length === 0) {
     playRejectSound();
-    statusTextElement.textContent = "화수분 주변에 빈 칸이 없어요.";
+    statusTextElement.textContent = "자재 창고 주변에 빈 칸이 없어요.";
     updateBrownMood("브라운이 주변 공간부터 정리하자고 손짓했어요.");
     return;
   }
@@ -763,8 +764,8 @@ async function handleDispenserTap(boardKey) {
     await animateSpawnItems(spawnedEntries);
     updateCounters();
     updateDispenserState();
-    updateBrownMood("브라운이 화수분에서 재료가 나오는 걸 지켜봤어요.");
-    statusTextElement.textContent = `화수분에서 재료 ${spawnCount}개가 나왔어요.`;
+    updateBrownMood("자재 창고에서 재료를 꺼냈어요!");
+    statusTextElement.textContent = `자재 창고에서 재료 ${spawnCount}개가 나왔어요.`;
   } finally {
     inputLocked = false;
   }
@@ -845,7 +846,13 @@ function updateDispenserState() {
 }
 
 function updateBrownMood(message) {
-  if (brownBubbleElement) brownBubbleElement.textContent = message;
+  if (!brownBubbleElement) return;
+  brownBubbleElement.textContent = message;
+  brownBubbleElement.classList.add("visible");
+  clearTimeout(brownBubbleTimer);
+  brownBubbleTimer = setTimeout(() => {
+    brownBubbleElement.classList.remove("visible");
+  }, 3000);
 }
 
 function wait(ms) {
